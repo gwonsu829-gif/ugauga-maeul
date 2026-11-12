@@ -6,71 +6,200 @@
 <title>우가우가마을</title>
 <meta name="description" content="팔로우하면 원시시대 마을에 내 집 한 채와 공룡 알 하나가 생겨요.">
 <style>
-  :root { --stone:#e4d9c4; --ink:#2e2418; --edge:#6b5a45; --gold:#f2b632; }
+  :root { --stone:#e4d9c4; --ink:#2e2418; --edge:#6b5a45; --gold:#f2b632; --sb:env(safe-area-inset-bottom,0px); }
   * { box-sizing:border-box; }
   html,body { margin:0; height:100%; overflow:hidden; background:#f2b27a;
     font-family:Pretendard,"Apple SD Gothic Neo","Malgun Gothic",sans-serif; color:var(--ink); }
-  canvas { position:fixed; inset:0; width:100%; height:100%; display:block; touch-action:none; }
+  canvas#c { position:fixed; inset:0; width:100%; height:100%; display:block; touch-action:none; }
   .box { background:var(--stone); border:2px solid var(--edge); border-radius:14px; box-shadow:0 4px 0 rgba(46,36,24,.35); }
-  #hud { position:fixed; top:12px; left:12px; padding:10px 14px; max-width:62vw; }
-  #hud h1 { margin:0; font-size:18px; }
-  #hud p { margin:2px 0 0; font-size:13px; }
   button, .btn { font:inherit; font-weight:700; cursor:pointer; color:var(--ink); padding:10px 14px;
     background:var(--gold); border:2px solid var(--edge); border-radius:12px; text-decoration:none; display:inline-block; }
-  #join { position:fixed; top:12px; right:12px; }
-  #find { position:fixed; left:50%; bottom:14px; transform:translateX(-50%); display:flex; gap:6px; padding:8px; width:min(360px,92vw); }
-  #find input { flex:1; min-width:0; font:inherit; padding:8px 10px; border:2px solid var(--edge); border-radius:10px; background:#fff; }
-  #card { position:fixed; left:50%; bottom:84px; transform:translateX(-50%); padding:12px 16px; width:min(320px,92vw); text-align:center; }
-  #card b { font-size:18px; display:block; overflow-wrap:anywhere; }
-  #card p { margin:4px 0 10px; font-size:13px; word-break:keep-all; }
-  #card .x { position:absolute; top:6px; right:6px; padding:2px 8px; background:none; border:none; }
+  input { font:inherit; padding:8px 10px; border:2px solid var(--edge); border-radius:10px; background:#fff; min-width:0; color:var(--ink); }
+  .ghost { background:none; }
+  .mini { padding:6px 10px; font-size:12px; background:var(--stone); }
+  [hidden] { display:none !important; }
+  p { word-break:keep-all; }
+
+  #hud { position:fixed; top:12px; left:12px; padding:8px 12px; max-width:68vw; display:flex; gap:10px; align-items:center; }
+  #medal { flex:none; width:44px; height:44px; border-radius:50%; background:var(--gold); border:2px solid var(--edge); display:grid; place-items:center; font-weight:800; font-size:14px; }
+  #hud h1 { margin:0; font-size:16px; white-space:nowrap; }
+  #hud h1 small { font-size:12px; font-weight:600; margin-left:6px; }
+  #hud p { margin:2px 0 0; font-size:12px; }
+  #news { position:fixed; top:84px; left:12px; margin:0; padding:6px 10px; font-size:12px; max-width:min(300px,70vw); cursor:pointer; }
+  #news b { margin-right:4px; }
+  #tr { position:fixed; top:12px; right:12px; display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
+  #clock { padding:4px 10px; font-size:12px; font-weight:700; }
+  #side { position:fixed; right:12px; bottom:calc(78px + var(--sb)); display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
+
+  #menu { position:fixed; left:50%; bottom:calc(10px + var(--sb)); transform:translateX(-50%); width:min(440px,96vw); display:flex; padding:5px; gap:4px; }
+  #menu button { flex:1; padding:11px 0; font-size:13px; background:none; border-color:transparent; white-space:nowrap; }
+  #menu button.on { background:var(--gold); border-color:var(--edge); }
+  #sheet { position:fixed; left:50%; bottom:calc(72px + var(--sb)); transform:translateX(-50%); width:min(440px,96vw); max-height:min(62vh,560px); overflow:auto; padding:14px; }
+  #sheet h2 { margin:0 28px 6px 0; font-size:17px; }
+  #sheet > div > p { margin:0 0 10px; font-size:13px; }
+  .x { position:absolute; top:6px; right:6px; padding:4px 8px; background:none; border:none; font-size:12px; }
+  .row { display:flex; gap:6px; margin-bottom:8px; }
+  .row input { flex:1; }
+  #sheet #msg { min-height:18px; margin:0; }
+  .list { display:grid; gap:6px; }
+  .list > * { text-align:left; background:#f3ead8; font-weight:400; font-size:13px; padding:10px 14px; border:2px solid var(--edge); border-radius:12px; }
+  .list b { display:block; font-size:15px; }
+  .list .now { background:var(--gold); }
+  .bar { height:10px; border:2px solid var(--edge); border-radius:6px; background:#fff; overflow:hidden; margin:0 0 10px; }
+  .bar i { display:block; height:100%; background:var(--gold); }
+  #dex { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  #dex article { background:#f3ead8; border:2px solid var(--edge); border-radius:12px; padding:8px; }
+  #dex article.mine { background:#ffe9a8; }
+  #dex .pics { display:flex; gap:4px; }
+  #dex figure { margin:0; flex:1; text-align:center; font-size:11px; }
+  #dex canvas { width:100%; aspect-ratio:1; display:block; border-radius:8px; background:linear-gradient(#bfe0e8,#e9dcc0 62%,#9aa868 63%); }
+  #dex b { display:block; font-size:14px; margin-top:6px; }
+  #dex em { font-style:normal; font-size:11px; font-weight:700; padding:1px 6px; border-radius:8px; border:1.5px solid var(--edge); }
+  #dex em.c { background:#e9a08a; } #dex em.h { background:#b7d58f; }
+  #dex p { margin:4px 0 0; font-size:12px; }
+
+  #card { position:fixed; left:50%; bottom:calc(72px + var(--sb)); transform:translateX(-50%); padding:12px 16px; width:min(320px,92vw); text-align:center; }
+  #card b { font-size:18px; display:block; overflow-wrap:anywhere; margin:0 30px; }
+  #card p { margin:4px 0 10px; font-size:13px; }
+
+  #intro { position:fixed; inset:0; display:grid; place-items:center; background:rgba(46,36,24,.35); padding:14px; overflow:auto; }
+  #intro > div { width:min(400px,100%); padding:20px 18px 16px; }
+  #intro h2 { margin:0; font-size:23px; line-height:1.3; word-break:keep-all; }
+  #intro .sub { margin:4px 0 12px; font-size:13px; font-weight:700; color:var(--edge); }
+  #intro ul { margin:0 0 12px; padding:0; list-style:none; display:grid; gap:6px; font-size:14px; }
+  #intro li { padding:8px 10px; background:#f3ead8; border-radius:10px; word-break:keep-all; }
+  #intro li b { margin-right:6px; }
+  #istat { margin:0 0 10px; font-size:14px; font-weight:800; text-align:center; }
+  #intro .two { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  #intro .two button { padding:12px 6px; }
+
+  #stick { position:fixed; left:22px; bottom:calc(26px + var(--sb)); width:124px; height:124px; border-radius:50%; background:rgba(228,217,196,.55); border:2px solid var(--edge); touch-action:none; }
+  #stick i { position:absolute; left:50%; top:50%; width:52px; height:52px; margin:-26px; border-radius:50%; background:var(--gold); border:2px solid var(--edge); }
+  #walkend { position:fixed; right:12px; top:12px; }
+  #walkhint { position:fixed; left:12px; top:12px; margin:0; padding:8px 12px; font-size:13px; max-width:62vw; }
+  #walkhint b { display:block; font-size:15px; }
+  @media (pointer:fine) { #stick { display:none; } }
+  body.walking :is(#hud,#news,#tr,#side,#menu,#sheet,#card), body.intro :is(#hud,#news,#tr,#side,#menu,#sheet,#card), body.shoot :is(#medal,#news,#tr,#side,#menu,#sheet,#intro,#hud small) { display:none !important; }
+
   dialog { padding:18px; width:min(340px,92vw); color:var(--ink); }
   dialog::backdrop { background:rgba(46,36,24,.5); }
   dialog h2 { margin:0 0 8px; font-size:18px; }
   dialog ol { margin:0 0 10px; padding-left:20px; line-height:1.7; font-size:14px; }
   dialog p { font-size:13px; margin:0 0 12px; }
-  dialog .row { display:flex; gap:8px; justify-content:flex-end; }
-  .ghost { background:none; }
-  [hidden] { display:none !important; }
+  dialog .end { display:flex; gap:8px; justify-content:flex-end; }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 
 <header id="hud" class="box">
-  <h1 id="vname"></h1>
-  <p id="vstat"></p>
-  <p id="vnext"></p>
+  <div id="medal"></div>
+  <div>
+    <h1 id="vname"></h1>
+    <p id="vstat"></p>
+    <p id="vnext"></p>
+  </div>
 </header>
+<p id="news" class="box"></p>
 
-<button id="join">내 집 받기</button>
+<div id="tr">
+  <button id="join">알 받기</button>
+  <div id="clock" class="box"></div>
+</div>
+<div id="side">
+  <button id="snd" class="mini">마을 소리 켜기</button>
+  <button id="ride" class="mini">익룡 따라가기</button>
+</div>
 
 <div id="card" class="box" hidden>
-  <button class="x" aria-label="닫기">✕</button>
+  <button class="x">닫기</button>
   <b id="cid"></b>
   <p id="cinfo"></p>
   <a id="clink" class="btn" target="_blank" rel="noopener">인스타에서 보기</a>
 </div>
 
-<form id="find" class="box">
-  <input id="q" aria-label="내 아이디로 집 찾기" placeholder="내 아이디로 집 찾기" autocomplete="off" autocapitalize="off">
-  <button>찾기</button>
-</form>
+<section id="sheet" class="box" hidden>
+  <button class="x">닫기</button>
+  <div data-tab="find">
+    <h2>찾기</h2>
+    <form id="find" class="row">
+      <input id="q" aria-label="아이디로 집 찾기" placeholder="아이디로 집 찾기" autocomplete="off" autocapitalize="off">
+      <button>찾기</button>
+    </form>
+    <form id="lot" class="row">
+      <input id="qn" aria-label="번지로 가기" placeholder="번지로 가기 (숫자)" inputmode="numeric" autocomplete="off">
+      <button>가기</button>
+    </form>
+    <p id="msg"></p>
+  </div>
+  <div data-tab="dex">
+    <h2>공룡 도감</h2>
+    <p>알에서 나오는 공룡은 열 가지예요. 어떤 공룡이 나올지는 아이디마다 정해져 있어요.</p>
+    <div id="dex"></div>
+  </div>
+  <div data-tab="spot">
+    <h2>명소</h2>
+    <p>누르면 그곳으로 날아가요.</p>
+    <div id="spots" class="list"></div>
+  </div>
+  <div data-tab="era">
+    <h2>시대</h2>
+    <p id="eranext"></p>
+    <div class="bar"><i id="erabar"></i></div>
+    <div id="eras" class="list"></div>
+  </div>
+</section>
+
+<nav id="menu" class="box">
+  <button data-tab="find">찾기</button>
+  <button data-tab="dex">공룡 도감</button>
+  <button id="walkgo">산책</button>
+  <button data-tab="spot">명소</button>
+  <button data-tab="era">시대</button>
+</nav>
+
+<div id="walkui" hidden>
+  <p id="walkhint" class="box"></p>
+  <button id="walkend">산책 끝</button>
+  <div id="stick"><i></i></div>
+</div>
+
+<div id="intro" hidden>
+  <div class="box">
+    <h2>팔로우 한 번에,<br>내 집과 공룡 알 하나.</h2>
+    <p class="sub">원시시대 마을, 우가우가마을</p>
+    <ul>
+      <li><b>집</b>내 아이디가 새겨진 집 한 채가 생겨요</li>
+      <li><b>알</b>집 옆 둥지에 공룡 알이 놓여요. 무엇이 나올지는 아이디마다 달라요</li>
+      <li><b>시대</b>팔로워가 늘면 마을 전체가 다음 시대로 넘어가요. 알이 깨고, 아기 공룡이 자라요</li>
+      <li><b>산책</b>내 공룡이 되어 마을을 걸어 다녀요</li>
+    </ul>
+    <p id="istat"></p>
+    <form id="ifind" class="row">
+      <input id="iq" aria-label="아이디로 집 찾기" placeholder="아이디로 집 찾기" autocomplete="off" autocapitalize="off">
+      <button>찾기</button>
+    </form>
+    <div class="two">
+      <button id="ilook" class="ghost">마을 구경하기</button>
+      <button id="ijoin">알 받으러 가기</button>
+    </div>
+  </div>
+</div>
 
 <dialog id="how" class="box">
-  <h2>집 받는 법</h2>
+  <h2>알 받는 법</h2>
   <ol>
     <li>인스타 계정을 팔로우해요</li>
     <li>게시물에 <b id="kw"></b> 한 글자만 댓글로 남겨요</li>
     <li>돌판에 내 아이디가 새겨지고, 집 옆에 공룡 알이 하나 놓여요</li>
   </ol>
   <p>100번째 안에 들어온 집에는 금빛 깃발이 계속 달려 있어요. 팔로워가 늘면 마을 전체가 다음 시대로 넘어가요.</p>
-  <div class="row">
+  <div class="end">
     <button class="ghost" id="howx">닫기</button>
     <a class="btn" id="iglink" target="_blank" rel="noopener">인스타로 가기</a>
   </div>
 </dialog>
 
-<script type="module" src="./app.js?v=f127c2bc"></script>
+<script type="module" src="./app.js?v=b8763777"></script>
 </body>
 </html>
