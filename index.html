@@ -81,6 +81,23 @@
   @media (pointer:fine) { #stick { display:none; } }
   body.walking :is(#hud,#news,#tr,#side,#menu,#sheet,#card), body.intro :is(#hud,#news,#tr,#side,#menu,#sheet,#card), body.shoot :is(#medal,#news,#tr,#side,#menu,#sheet,#intro,#hud small) { display:none !important; }
 
+  #load { position:fixed; inset:0; z-index:20; display:grid; place-content:center; justify-items:center; text-align:center; padding:24px;
+    background:radial-gradient(circle at 50% 36%, #fff0d2 0, #f8cc93 42%, #e89c5a 100%); transition:opacity .5s; }
+  #load.done { opacity:0; pointer-events:none; }
+  #load .badge { width:min(54vw,220px); aspect-ratio:1; border-radius:50%; overflow:hidden; background:#ffeccb; border:6px solid #fffaf0;
+    box-shadow:0 0 0 10px rgba(255,250,240,.35), 0 14px 0 rgba(46,36,24,.14); animation:bob 1.8s ease-in-out infinite; }
+  #load img { width:100%; height:100%; display:block; object-fit:cover; transform:scale(1.14) translateY(2%); }
+  #load h2 { margin:24px 0 0; font-size:28px; font-weight:900; letter-spacing:-.5px; }
+  #load .say { position:relative; margin:16px 0 0; padding:11px 18px 12px; min-width:230px; max-width:300px; background:#fffaf0; border:2px solid var(--edge); border-radius:16px; box-shadow:0 4px 0 rgba(46,36,24,.25); font-size:16px; font-weight:700; }
+  #load .say::before { content:""; position:absolute; top:-9px; left:50%; width:14px; height:14px; margin-left:-7px; background:#fffaf0; border-left:2px solid var(--edge); border-top:2px solid var(--edge); transform:rotate(45deg); }
+  #load .say b { display:block; margin-bottom:2px; font-size:12px; color:var(--edge); }
+  #load .prog { width:170px; height:12px; margin-top:20px; border:2px solid var(--edge); border-radius:7px; background:rgba(255,250,240,.7); overflow:hidden; }
+  #load .prog i { display:block; width:42%; height:100%; border-radius:5px; background:var(--gold); animation:slide 1.2s ease-in-out infinite alternate; }
+  @keyframes bob { 0%,100% { transform:translateY(0) rotate(-2deg); } 50% { transform:translateY(-8px) rotate(2deg); } }
+  @keyframes slide { from { transform:translateX(-12%); } to { transform:translateX(150%); } }
+  body.shoot #load { display:none; }
+  @media (prefers-reduced-motion:reduce) { #load .badge, #load .prog i { animation:none; } }
+
   dialog { padding:18px; width:min(340px,92vw); color:var(--ink); }
   dialog::backdrop { background:rgba(46,36,24,.5); }
   dialog h2 { margin:0 0 8px; font-size:18px; }
@@ -91,6 +108,18 @@
 </head>
 <body>
 <canvas id="c"></canvas>
+
+<!-- 처음 들어올 때: 마을이 다 그려질 때까지 흔들리는 알과 족장 한마디 -->
+<div id="load">
+  <div class="badge"><img src="./loading.webp" alt="" width="640" height="640"></div>
+  <h2>우가우가마을</h2>
+  <p class="say"><b>족장 우가</b><span id="loadmsg">우가! 마을 짓는 중. 잠깐 기다려라.</span></p>
+  <div class="prog"><i></i></div>
+</div>
+<script>(() => { // 기다리는 동안 족장 말이 바뀐다
+  const lines = ['우가! 마을 짓는 중. 잠깐 기다려라.', '돌 나르는 중. 무겁다. 조금만.', '공룡 깨우는 중. 살살 깨워야 한다.', '모닥불 피우는 중. 후, 후.', '거의 다 됐다. 진짜다. 우가.'], p = document.getElementById('loadmsg'); let i = 0;
+  window.loadTick = setInterval(() => { p.textContent = ++i > 12 ? '오래 걸린다. 새로 고쳐 봐라. 우가.' : lines[i % lines.length]; }, 1700);
+})();</script>
 
 <header id="hud" class="box">
   <div id="medal"></div>
@@ -200,6 +229,6 @@
   </div>
 </dialog>
 
-<script type="module" src="./app.js?v=4dfa1798"></script>
+<script type="module" src="./app.js?v=3cbfc490"></script>
 </body>
 </html>
