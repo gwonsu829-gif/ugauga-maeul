@@ -78,6 +78,13 @@
   #walkend { position:fixed; right:12px; top:12px; }
   #walkhint { position:fixed; left:12px; top:12px; margin:0; padding:8px 12px; font-size:13px; max-width:62vw; }
   #walkhint b { display:block; font-size:15px; }
+  #walkside { position:fixed; right:12px; bottom:calc(26px + var(--sb)); display:flex; flex-direction:column; align-items:flex-end; gap:6px; max-width:60vw; }
+  #wstat { margin:0; padding:6px 10px; font-size:13px; font-weight:700; }
+  #sheet h2.gap { margin-top:14px; }
+  .list button:disabled { opacity:.55; cursor:default; }
+  #menu button { min-width:0; }
+  @media (max-width:400px) { #menu button { font-size:12px; letter-spacing:-.3px; } }
+  #cnest { margin-bottom:6px; }
   @media (pointer:fine) { #stick { display:none; } }
   body.walking :is(#hud,#news,#tr,#side,#menu,#sheet,#card), body.intro :is(#hud,#news,#tr,#side,#menu,#sheet,#card), body.shoot :is(#medal,#news,#tr,#side,#menu,#sheet,#intro,#hud small) { display:none !important; }
 
@@ -134,6 +141,7 @@
 <div id="tr">
   <button id="join">알 받기</button>
   <div id="clock" class="box"></div>
+  <button id="purse" class="mini"></button>
 </div>
 <div id="side">
   <button id="snd" class="mini">마을 소리 켜기</button>
@@ -145,6 +153,7 @@
   <b id="cid"></b>
   <p id="cinfo"></p>
   <button id="ccare" hidden></button>
+  <button id="cnest" hidden></button>
   <a id="clink" class="btn">인스타에서 보기</a>
 </div>
 
@@ -178,12 +187,25 @@
     <div class="bar"><i id="erabar"></i></div>
     <div id="eras" class="list"></div>
   </div>
+  <div data-tab="shell">
+    <h2>조개</h2>
+    <p><b id="shn"></b> 마을에서 모은 조개로 내 집을 꾸며요.</p>
+    <div class="list">
+      <div><b>열매 줍기</b>산책하다 길에 떨어진 빨간 열매를 주우면 조개를 1개 받아요.</div>
+      <div><b>족장 심부름</b>산책 중에 심부름을 받아 빛기둥까지 걸어가면 조개를 받아요. 멀수록 많이 받아요.</div>
+      <div><b>둥지 조개</b>내 집 둥지에 30분마다 하나씩 쌓여요. 24개까지만 쌓이니 가끔 들러서 주워요.</div>
+    </div>
+    <h2 class="gap">내 집 꾸미기</h2>
+    <p id="decomsg"></p>
+    <div id="deco" class="list"></div>
+  </div>
 </section>
 
 <nav id="menu" class="box">
   <button data-tab="find">찾기</button>
   <button data-tab="dex">공룡 도감</button>
   <button id="walkgo">산책</button>
+  <button data-tab="shell">조개</button>
   <button data-tab="spot">명소</button>
   <button data-tab="era">시대</button>
 </nav>
@@ -192,6 +214,10 @@
   <p id="walkhint" class="box"></p>
   <button id="walkend">산책 끝</button>
   <div id="stick"><i></i></div>
+  <div id="walkside">
+    <p id="wstat" class="box"></p>
+    <button id="errand" class="mini"></button>
+  </div>
 </div>
 
 <div id="intro" hidden>
@@ -230,6 +256,6 @@
   </div>
 </dialog>
 
-<script type="module" src="./app.js?v=d5e38311"></script>
+<script type="module" src="./app.js?v=c9ccd102"></script>
 </body>
 </html>
