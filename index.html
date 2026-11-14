@@ -84,7 +84,7 @@
   .list button:disabled { opacity:.55; cursor:default; }
   #menu button { min-width:0; }
   @media (max-width:400px) { #menu button { font-size:12px; letter-spacing:-.3px; } }
-  #cnest { margin-bottom:6px; }
+  #cnest, #cfeed { margin-bottom:6px; }
   @media (pointer:fine) { #stick { display:none; } }
   body.walking :is(#hud,#news,#tr,#side,#menu,#sheet,#card), body.intro :is(#hud,#news,#tr,#side,#menu,#sheet,#card), body.shoot :is(#medal,#news,#tr,#side,#menu,#sheet,#intro,#hud small) { display:none !important; }
 
@@ -155,6 +155,7 @@
   <p id="cinfo"></p>
   <button id="ccare" hidden></button>
   <button id="cnest" hidden></button>
+  <button id="cfeed" hidden></button>
   <a id="clink" class="btn">인스타에서 보기</a>
 </div>
 
@@ -190,16 +191,16 @@
   </div>
   <div data-tab="shell">
     <h2>먹이</h2>
-    <p><b id="shn"></b> 모은 먹이를 내 알에게 줘요. 먹을수록 알이 커지고, 마을에 온 모든 사람에게 그 크기로 보여요. 많이 먹은 알에서는 남다른 아기 공룡이 나와요.</p>
+    <p><b id="shn"></b> 먹이를 주면 내 알이 커지고, 마을에 온 모든 사람에게 그 크기로 보여요. 많이 먹은 알에서는 남다른 아기 공룡이 나와요.</p>
+    <p id="decomsg"></p>
+    <div id="deco" class="list"></div>
+    <div id="rankbox" hidden><h2 class="gap">제일 큰 알 순위</h2><div id="rank" class="list"></div></div>
+    <h2 class="gap">먹이 모으는 법</h2>
     <div class="list">
       <div><b>열매 줍기</b>산책하다 길에 떨어진 빨간 열매를 주우면 먹이를 1개 받아요.</div>
       <div><b>족장 심부름</b>산책 중에 심부름을 받아 빛기둥까지 걸어가면 먹이를 받아요. 멀수록 많이 받아요.</div>
       <div><b>둥지 먹이</b>족장이 내 집 둥지에 30분마다 하나씩 놓고 가요. 24개까지만 쌓이니 가끔 들러서 주워요.</div>
     </div>
-    <h2 class="gap">내 알 키우기</h2>
-    <p id="decomsg"></p>
-    <div id="deco" class="list"></div>
-    <div id="rankbox" hidden><h2 class="gap">제일 큰 알 순위</h2><div id="rank" class="list"></div></div>
   </div>
 </section>
 
@@ -230,7 +231,7 @@
       <li><b>집</b>내 아이디가 새겨진 집 한 채가 생겨요</li>
       <li><b>알</b>집 옆 둥지에 공룡 알이 놓여요. 무엇이 나올지는 아이디마다 달라요</li>
       <li><b>시대</b>팔로워가 늘면 마을 전체가 다음 시대로 넘어가요. 알이 깨고, 아기 공룡이 자라요</li>
-      <li><b>산책</b>내 공룡이 되어 마을을 걸어 다녀요</li>
+      <li><b>먹이</b>산책하며 먹이를 주워 내 알에게 주면 알이 커져요. 제일 큰 알 순위도 있어요</li>
     </ul>
     <p id="istat"></p>
     <form id="ifind" class="row">
@@ -258,6 +259,6 @@
   </div>
 </dialog>
 
-<script type="module" src="./app.js?v=69cc360f"></script>
+<script type="module" src="./app.js?v=ff9fd5a7"></script>
 </body>
 </html>
